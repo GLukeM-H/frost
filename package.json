@@ -1,0 +1,25 @@
+{
+  "name": "frost",
+  "version": "1.0.0",
+  "description": "react web page gui experiment",
+  "main": "server.js",
+  "scripts": {
+    "client-install": "cd client && npm install",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "server": "nodemon server.js",
+    "client": "cd client && npm start",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "author": "Luke Mendelman-Haenn",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "concurrently": "^5.3.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.11.9"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.6"
+  }
+}
