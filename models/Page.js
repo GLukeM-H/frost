@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 //Create Schema
 const PageSchema = new Schema({
-    tree: Object,
+    contentComp: Object,
     creator: String
 });
 

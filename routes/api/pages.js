@@ -6,7 +6,7 @@ const Page = require('../../models/Page');
 
 // @route GET api/pages
 // @desc Get All Pages
-// @access
+// @access PUBLIC
 router.get('/', (req, res) => {
     Page.find()
         .sort( {creator: 1})
@@ -15,10 +15,10 @@ router.get('/', (req, res) => {
 
 // @route POST api/pages
 // @desc post a Page
-// @access
+// @access PUBLIC
 router.post('/', (req, res) => {
     const newPage = new Page({
-        tree: req.body.tree,
+        contentComp: req.body.contentComp,
         creator: req.body.creator
     });
 
