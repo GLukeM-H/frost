@@ -1,1 +1,7 @@
 node_modules
+
+# config
+config/keys.js
+
+# misc
+.vscode/
