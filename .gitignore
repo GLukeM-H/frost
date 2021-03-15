@@ -1,7 +1,7 @@
 node_modules
 
 # config
-config/keys.js
+config/
 
 # misc
 .vscode/
