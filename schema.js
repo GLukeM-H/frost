@@ -1,10 +1,21 @@
-const { GraphQLObjectType, GraphQLString, GraphQLSchema } = require("graphql");
+const {
+	GraphQLObjectType,
+	GraphQLString,
+	GraphQLList,
+	GraphQLSchema,
+} = require("graphql");
+const { GraphQLJSONObject } = require("graphql-type-json");
+const { Page } = require("./models/Page");
+
+console.log(Page);
 
 const User = {
 	name: "Luke",
 	username: "glukem",
 	password: "I forgot...",
+	visage: null,
 };
+const Users = [User];
 
 const ContentComp = {
 	rootComp: {
@@ -19,7 +30,7 @@ const ContentComp = {
 
 const Visage = {
 	id: "1",
-	creator: User,
+	owner: User,
 	contentComp: ContentComp,
 };
 
@@ -29,6 +40,13 @@ const UserType = new GraphQLObjectType({
 		name: { type: GraphQLString, resolve: () => User.name },
 		username: { type: GraphQLString, resolve: () => User.username },
 		password: { type: GraphQLString, resolve: () => User.password },
+		visage: {
+			type: VisageType,
+			args: {
+				owner: { type: GraphQLString },
+			},
+			resolve: (parent, args) => Page.findOne({ creator: args.owner }),
+		},
 	}),
 });
 
@@ -36,10 +54,13 @@ const VisageType = new GraphQLObjectType({
 	name: "visage",
 	fields: () => ({
 		id: { type: GraphQLString, resolve: () => Visage.id },
-		creator: { type: UserType, resolve: () => Visage.creator },
+		owner: { type: UserType, resolve: () => Visage.owner },
 		contentComp: {
-			type: GraphQLString,
-			resolve: () => JSON.stringify(Visage.contentComp),
+			type: GraphQLJSONObject,
+			args: {
+				id: { type: GraphQLString },
+			},
+			resolve: (parent, args) => Page.findById(args.id),
 		},
 	}),
 });
@@ -47,9 +68,16 @@ const VisageType = new GraphQLObjectType({
 const RootQuery = new GraphQLObjectType({
 	name: "RootQueryType",
 	fields: () => ({
+		users: {
+			type: new GraphQLList(UserType),
+			resolve: () => Users,
+		},
 		user: {
-			type: UserType,
-			resolve: () => User,
+			type: GraphQLJSONObject,
+			args: {
+				username: { type: GraphQLString },
+			},
+			resolve: (parent, args) => Page.findOne({ creator: args.username }),
 		},
 		visage: {
 			type: VisageType,
