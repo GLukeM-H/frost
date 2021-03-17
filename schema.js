@@ -3,49 +3,27 @@ const {
 	GraphQLString,
 	GraphQLList,
 	GraphQLSchema,
+	GraphQLNonNull,
+	GraphQLID,
 } = require("graphql");
-const { GraphQLJSONObject } = require("graphql-type-json");
-const { Page } = require("./models/Page");
+const { GraphQLJSONObject, GraphQLJSON } = require("graphql-type-json");
+const { Visage } = require("./models/Visage");
+const { User } = require("./models/User");
 
-console.log(Page);
-
-const User = {
-	name: "Luke",
-	username: "glukem",
-	password: "I forgot...",
-	visage: null,
-};
-const Users = [User];
-
-const ContentComp = {
-	rootComp: {
-		comp: "Grid",
-		childIds: [],
-		parentId: null,
-		props: {
-			container: true,
-		},
-	},
-};
-
-const Visage = {
-	id: "1",
-	owner: User,
-	contentComp: ContentComp,
-};
-
+// Types
 const UserType = new GraphQLObjectType({
 	name: "user",
 	fields: () => ({
-		name: { type: GraphQLString, resolve: () => User.name },
-		username: { type: GraphQLString, resolve: () => User.username },
-		password: { type: GraphQLString, resolve: () => User.password },
+		id: { type: new GraphQLNonNull(GraphQLID) },
+		name: { type: GraphQLString },
+		username: { type: GraphQLString },
+		password: { type: GraphQLString },
 		visage: {
 			type: VisageType,
-			args: {
-				owner: { type: GraphQLString },
+			resolve: async (parent) => {
+				const visage = await Visage.findOne({ ownerId: parent._id });
+				return visage;
 			},
-			resolve: (parent, args) => Page.findOne({ creator: args.owner }),
 		},
 	}),
 });
@@ -53,7 +31,10 @@ const UserType = new GraphQLObjectType({
 const VisageType = new GraphQLObjectType({
 	name: "visage",
 	fields: () => ({
-		id: { type: GraphQLString, resolve: () => Visage.id },
+		id: {
+			type: new GraphQLNonNull(GraphQLID),
+			resolve: (parent) => parent._id,
+		},
 		owner: { type: UserType, resolve: () => Visage.owner },
 		contentComp: {
 			type: GraphQLJSONObject,
@@ -65,19 +46,26 @@ const VisageType = new GraphQLObjectType({
 	}),
 });
 
+// Query
 const RootQuery = new GraphQLObjectType({
 	name: "RootQueryType",
 	fields: () => ({
 		users: {
 			type: new GraphQLList(UserType),
-			resolve: () => Users,
+			resolve: async () => {
+				const users = await User.find();
+				return users;
+			},
 		},
 		user: {
-			type: GraphQLJSONObject,
+			type: UserType,
 			args: {
-				username: { type: GraphQLString },
+				id: { type: new GraphQLNonNull(GraphQLID) },
 			},
-			resolve: (parent, args) => Page.findOne({ creator: args.username }),
+			resolve: async (parent, { id }) => {
+				const user = await User.findById(id);
+				return user;
+			},
 		},
 		visage: {
 			type: VisageType,
@@ -86,6 +74,37 @@ const RootQuery = new GraphQLObjectType({
 	}),
 });
 
+// Mutations
+const mutation = new GraphQLObjectType({
+	name: "mutation",
+	fields: () => ({
+		addUser: {
+			type: UserType,
+			args: {
+				name: { type: GraphQLString },
+				username: { type: new GraphQLNonNull(GraphQLString) },
+				password: { type: new GraphQLNonNull(GraphQLString) },
+			},
+			resolve: async (parent, args) => {
+				const user = new User(args);
+				const returnedUser = await user.save();
+				return returnedUser;
+			},
+		},
+		deleteUser: {
+			type: UserType,
+			args: {
+				id: { type: new GraphQLNonNull(GraphQLID) },
+			},
+			resolve: async (parent, { id }) => {
+				const user = await User.findByIdAndDelete(id);
+				return user;
+			},
+		},
+	}),
+});
+
 module.exports = new GraphQLSchema({
 	query: RootQuery,
+	mutation,
 });

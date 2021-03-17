@@ -2,18 +2,10 @@ const express = require("express");
 const mongoose = require("mongoose");
 const { graphqlHTTP } = require("express-graphql");
 const schema = require("./schema.js");
-
+const { User } = require("./models/User");
 const pages = require("./routes/api/pages");
 
 const app = express();
-
-app.use(
-	"/graphql",
-	graphqlHTTP({
-		schema: schema,
-		graphiql: true,
-	})
-);
 
 // BodyParser Middleware
 app.use(express.json());
@@ -30,6 +22,14 @@ mongoose.connection
 	.on("error", (e) => console.log(e));
 
 // Use Routes
+app.use(
+	"/graphql",
+	graphqlHTTP({
+		schema: schema,
+		graphiql: true,
+	})
+);
+
 app.use("/api/pages", pages);
 
 const port = process.env.PORT || 5000;
