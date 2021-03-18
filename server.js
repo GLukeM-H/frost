@@ -1,37 +1,23 @@
-const express = require("express");
 const mongoose = require("mongoose");
-const { graphqlHTTP } = require("express-graphql");
-const schema = require("./schema.js");
-const { User } = require("./models/User");
-const pages = require("./routes/api/pages");
+const { ApolloServer } = require("apollo-server");
+const typeDefs = require("./src/typeDefs.js");
+const resolvers = require("./src/resolvers");
 
-const app = express();
+const server = new ApolloServer({ typeDefs, resolvers });
 
-// BodyParser Middleware
-app.use(express.json());
+// Connect to mongodb
+const { mongoURI } = require("./config/keys");
+const Visage = require("./src/models/Visage.js");
 
-// DB Config
-const db = require("./config/keys").mongoURI;
-// const { schema } = require("./models/Page");
-
-// Connect to mongo
-mongoose.connect(db, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 mongoose.connection
 	.once("open", () => console.log("MongoDB Connected!"))
 	.on("error", (e) => console.log(e));
 
-// Use Routes
-app.use(
-	"/graphql",
-	graphqlHTTP({
-		schema: schema,
-		graphiql: true,
-	})
-);
-
-app.use("/api/pages", pages);
-
+// Listen on port
 const port = process.env.PORT || 5000;
 
-app.listen(port, () => console.log(`Server started on port ${port}`));
+server.listen({ port }).then(({ url }) => {
+	console.log(`Server started at ${url}`);
+});
