@@ -18,6 +18,7 @@ const ComponentSchema = new Schema({
 
 const VisageSchema = new Schema({
 	ownerId: { type: Schema.Types.ObjectId, required: true },
+	name: { type: String, required: true },
 	content: {
 		type: Map,
 		of: ComponentSchema,

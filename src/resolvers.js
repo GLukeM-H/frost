@@ -4,14 +4,14 @@ const { Visage, User } = require("./models");
 const resolvers = {
 	JSONObject: GraphQLJSONObject,
 	Query: {
-		users: async () => {
-			return await User.find();
+		users: async (parent, { filter }) => {
+			return await User.find(filter);
 		},
 		user: async (parent, { id }) => {
 			return await User.findById(id);
 		},
-		visages: async () => {
-			return await Visage.find();
+		visages: async (parent, { filter }) => {
+			return await Visage.find(filter);
 		},
 		visage: async (parent, { id }) => {
 			return await Visage.findById(id);
@@ -22,19 +22,27 @@ const resolvers = {
 			const user = new User(args);
 			return await user.save();
 		},
-		modifyUser: async (parent, { id, update }) => {
+		updateUser: async (parent, { id, update }) => {
 			return await User.findByIdAndUpdate(id, update);
 		},
 		deleteUser: async (parent, { id }) => {
 			return await User.findByIdAndDelete(id);
 		},
 		addVisage: async (parent, args) => {
+			// the root component is identified by having its
+			// key be the same as the visage._id
 			const visage = new Visage(args);
 			const rootComp = visage.content.get("tempId");
 			rootComp["_id"] = visage._id;
 			visage.content.set(visage._id.toString(), rootComp);
 			visage.content.delete("tempId");
 			return await visage.save();
+		},
+		updateVisage: async (parent, { id, update }) => {
+			return await Visage.findByIdAndUpdate(id, update);
+		},
+		deleteVisage: async (parent, { id }) => {
+			return await Visage.findByIdAndDelete(id);
 		},
 	},
 	User: {

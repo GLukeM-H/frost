@@ -4,18 +4,18 @@ const typeDefs = gql`
 	scalar JSONObject
 
 	type Query {
-		users: [User]
+		users(filter: UserFields): [User]
 		user(id: ID!): User
-		visages: [Visage]
+		visages(filter: VisageFields): [Visage]
 		visage(id: ID!): Visage
 	}
 
 	type Mutation {
 		addUser(name: String, username: String!, password: String!): User!
-		modifyUser(id: ID!, update: UserUpdate!): User!
+		updateUser(id: ID!, update: UserFields!): User!
 		deleteUser(id: ID!): User
 		addVisage(ownerId: ID!): Visage!
-		modifyVisage(id: ID!, update: VisageUpdate): Visage!
+		updateVisage(id: ID!, update: VisageFields!): Visage!
 		deleteVisage(id: ID!): Visage
 	}
 
@@ -30,12 +30,12 @@ const typeDefs = gql`
 
 	type Visage {
 		_id: ID!
-		ownerId: ID!
+		name: String!
 		owner: User
 		content: JSONObject
 	}
 
-	input UserUpdate {
+	input UserFields {
 		name: String
 		username: String
 		password: String
@@ -43,9 +43,10 @@ const typeDefs = gql`
 		visageId: String
 	}
 
-	input VisageUpdate {
-		contentComp: JSONObject
-		ownerId: ID
+	input VisageFields {
+		name: String
+		ownerId: String
+		content: JSONObject
 	}
 `;
 
