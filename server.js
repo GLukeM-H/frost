@@ -1,14 +1,18 @@
-const mongoose = require("mongoose");
-const { ApolloServer } = require("apollo-server");
-const typeDefs = require("./src/typeDefs.js");
-const resolvers = require("./src/resolvers");
+import mongoose from "mongoose";
+import { ApolloServer } from "apollo-server-express";
+import express from "express";
 
+import typeDefs from "./src/typeDefs.js";
+import resolvers from "./src/resolvers.js";
+import { mongoURI } from "./config/keys.js";
+
+const port = process.env.PORT || 5000;
+const app = express();
 const server = new ApolloServer({ typeDefs, resolvers });
 
-// Connect to mongodb
-const { mongoURI } = require("./config/keys");
-const Visage = require("./src/models/Visage.js");
+server.applyMiddleware({ app });
 
+// Connect to mongodb
 mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 mongoose.connection
@@ -16,8 +20,8 @@ mongoose.connection
 	.on("error", (e) => console.log(e));
 
 // Listen on port
-const port = process.env.PORT || 5000;
-
-server.listen({ port }).then(({ url }) => {
-	console.log(`Server started at ${url}`);
+app.listen({ port }, () => {
+	console.log(
+		`Server started at http://localhost:${port}${server.graphqlPath}`
+	);
 });

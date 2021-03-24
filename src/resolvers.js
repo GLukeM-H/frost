@@ -1,5 +1,5 @@
-const { GraphQLJSONObject } = require("graphql-type-json");
-const { Visage, User } = require("./models");
+import { GraphQLJSONObject } from "graphql-type-json";
+import { Visage, User } from "./models/index.js";
 
 const resolvers = {
 	JSONObject: GraphQLJSONObject,
@@ -57,4 +57,4 @@ const resolvers = {
 	},
 };
 
-module.exports = resolvers;
+export default resolvers;

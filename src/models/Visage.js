@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const { Schema } = mongoose;
 
 const ComponentSchema = new Schema({
@@ -30,4 +30,4 @@ const VisageSchema = new Schema({
 
 const Visage = mongoose.model("Visage", VisageSchema);
 
-module.exports = Visage;
+export default Visage;
