@@ -1,4 +1,4 @@
-import { gql } from "apollo-server";
+import { gql } from "apollo-server-express";
 
 const typeDefs = gql`
 	scalar JSONObject
@@ -8,6 +8,7 @@ const typeDefs = gql`
 		user(id: ID!): User
 		visages(filter: VisageFields): [Visage]
 		visage(id: ID!): Visage
+		viewer: User
 	}
 
 	type Mutation {
@@ -17,6 +18,7 @@ const typeDefs = gql`
 		addVisage(ownerId: ID!): Visage!
 		updateVisage(id: ID!, update: VisageFields!): Visage!
 		deleteVisage(id: ID!): Visage
+		login(username: String!, password: String!): String
 	}
 
 	type User {
