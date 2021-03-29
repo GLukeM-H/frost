@@ -18,7 +18,7 @@ const typeDefs = gql`
 		addVisage(ownerId: ID!): Visage!
 		updateVisage(id: ID!, update: VisageFields!): Visage!
 		deleteVisage(id: ID!): Visage
-		login(username: String!, password: String!): String
+		login(username: String!, password: String!): Login!
 	}
 
 	type User {
@@ -35,6 +35,11 @@ const typeDefs = gql`
 		name: String!
 		owner: User
 		content: JSONObject
+	}
+
+	type Login {
+		token: String
+		error: String
 	}
 
 	input UserFields {

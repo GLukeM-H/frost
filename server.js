@@ -18,13 +18,13 @@ const server = new ApolloServer({
 	},
 });
 
-app.use(
-	expressJwt({
-		secret,
-		algorithms: ["HS256"],
-		credentialsRequired: false,
-	})
-);
+// app.use(
+// 	expressJwt({
+// 		secret,
+// 		algorithms: ["HS256"],
+// 		credentialsRequired: false,
+// 	})
+// );
 
 server.applyMiddleware({ app });
 

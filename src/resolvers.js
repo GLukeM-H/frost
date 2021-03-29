@@ -54,17 +54,21 @@ const resolvers = {
 		login: async (parent, { username, password }) => {
 			const [user] = await User.find({ username });
 			try {
+				if (!user) throw `Could not find username ${username}`;
+
 				if (await bcrypt.compare(password, user.password)) {
-					return jwt.sign({ payload: { roles: "admin" } }, secret, {
-						subject: user._id.toString(),
-						algorithm: "HS256",
-						expiresIn: "15m",
-					});
+					return {
+						token: jwt.sign({ payload: { roles: "user" } }, secret, {
+							subject: user._id.toString(),
+							algorithm: "HS256",
+							expiresIn: "15m",
+						}),
+					};
 				} else {
-					throw Error;
+					throw "Incorrect password";
 				}
 			} catch (err) {
-				return err;
+				return { error: err.toString() };
 			}
 		},
 	},
