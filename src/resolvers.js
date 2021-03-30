@@ -24,10 +24,17 @@ const resolvers = {
 		},
 	},
 	Mutation: {
-		addUser: async (parent, args) => {
-			const hPassword = await bcrypt.hash(args.password, 10);
-			const user = new User({ ...args, password: hPassword });
-			return await user.save();
+		addUser: async (parent, { username, password }) => {
+			try {
+				if ((await User.find({ username })).length) {
+					throw "Username already exists";
+				}
+				const hPassword = await bcrypt.hash(password, 10);
+				const user = new User({ username, password: hPassword });
+				return await user.save();
+			} catch (err) {
+				return null;
+			}
 		},
 		updateUser: async (parent, { id, update }) => {
 			return await User.findByIdAndUpdate(id, update);
@@ -35,15 +42,20 @@ const resolvers = {
 		deleteUser: async (parent, { id }) => {
 			return await User.findByIdAndDelete(id);
 		},
-		addVisage: async (parent, args) => {
-			// the root component is identified by having its
-			// key be the same as the visage._id
-			const visage = new Visage(args);
-			const rootComp = visage.content.get("tempId");
-			rootComp["_id"] = visage._id;
-			visage.content.set(visage._id.toString(), rootComp);
-			visage.content.delete("tempId");
-			return await visage.save();
+		addVisage: async (parent, { ownerId, name }) => {
+			try {
+				// the root component is identified by having its
+				// key be the same as the visage._id
+				const visage = new Visage({ ownerId, name });
+				const rootComp = visage.content.get("tempId");
+				rootComp["_id"] = visage._id;
+				visage.content.set(visage._id.toString(), rootComp);
+				visage.content.delete("tempId");
+				return await visage.save();
+			} catch (err) {
+				console.log(err);
+				return null;
+			}
 		},
 		updateVisage: async (parent, { id, update }) => {
 			return await Visage.findByIdAndUpdate(id, update);
