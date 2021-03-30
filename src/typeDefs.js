@@ -38,6 +38,7 @@ const typeDefs = gql`
 	}
 
 	type Login {
+		user: User
 		token: String
 		error: String
 	}

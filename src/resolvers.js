@@ -58,6 +58,7 @@ const resolvers = {
 
 				if (await bcrypt.compare(password, user.password)) {
 					return {
+						user,
 						token: jwt.sign({ payload: { roles: "user" } }, secret, {
 							subject: user._id.toString(),
 							algorithm: "HS256",
