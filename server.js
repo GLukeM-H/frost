@@ -26,6 +26,19 @@ app.use(
 	})
 );
 
+app.use((err, req, res, next) => {
+	if (
+		err.name === "UnauthorizedError" &&
+		err.inner.toString() === "TokenExpiredError: jwt expired"
+	) {
+		res
+			.status(err.status)
+			.send({ error: "TokenExpiredError", message: err.message });
+		return;
+	}
+	next();
+});
+
 server.applyMiddleware({ app });
 
 // Connect to mongodb
