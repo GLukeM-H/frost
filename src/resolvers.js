@@ -2,7 +2,6 @@ import { GraphQLJSONObject } from "graphql-type-json";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { Visage, User } from "./models/index.js";
-import { secret } from "../config/keys.js";
 
 const resolvers = {
 	JSONObject: GraphQLJSONObject,
@@ -71,11 +70,15 @@ const resolvers = {
 				if (await bcrypt.compare(password, user.password)) {
 					return {
 						user,
-						token: jwt.sign({ payload: { roles: "user" } }, secret, {
-							subject: user._id.toString(),
-							algorithm: "HS256",
-							expiresIn: "15m",
-						}),
+						token: jwt.sign(
+							{ payload: { roles: "user" } },
+							process.env.SECRET,
+							{
+								subject: user._id.toString(),
+								algorithm: "HS256",
+								expiresIn: "15m",
+							}
+						),
 					};
 				} else {
 					throw "Incorrect password";
