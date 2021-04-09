@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { ApolloServer } from "apollo-server-express";
 import express from "express";
 import expressJwt from "express-jwt";
+import path from "path";
 
 import typeDefs from "./src/typeDefs.js";
 import resolvers from "./src/resolvers.js";
@@ -38,6 +39,13 @@ app.use((err, req, res, next) => {
 	}
 	next();
 });
+
+if (process.env.NODE_ENV === "production") {
+	app.use(express.static("client/build"));
+	app.get("*", (req, res) => {
+		res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+	});
+}
 
 server.applyMiddleware({ app });
 
