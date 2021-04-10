@@ -12,6 +12,9 @@ const ComponentSchema = new Schema({
 		required: true,
 		default: {
 			container: true,
+			style: {
+				minHeight: "10rem",
+			},
 		},
 	},
 });
