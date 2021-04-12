@@ -15,7 +15,7 @@ const typeDefs = gql`
 		addUser(username: String!, password: String!): User
 		updateUser(id: ID!, update: UserFields!): User!
 		deleteUser(id: ID!): User
-		addVisage(ownerId: ID!, name: String!): Visage!
+		addVisage(visage: VisageFields!): Visage!
 		updateVisage(id: ID!, update: VisageFields!): Visage!
 		deleteVisage(id: ID!): Visage
 		login(username: String!, password: String!): Login!
@@ -34,6 +34,7 @@ const typeDefs = gql`
 		_id: ID!
 		name: String!
 		owner: User
+		rootId: String!
 		content: JSONObject
 	}
 
@@ -54,6 +55,7 @@ const typeDefs = gql`
 	input VisageFields {
 		name: String
 		ownerId: String
+		rootId: String
 		content: JSONObject
 	}
 `;

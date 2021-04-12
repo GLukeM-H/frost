@@ -41,15 +41,9 @@ const resolvers = {
 		deleteUser: async (parent, { id }) => {
 			return await User.findByIdAndDelete(id);
 		},
-		addVisage: async (parent, { ownerId, name }) => {
+		addVisage: async (parent, { visage: visageFields }) => {
 			try {
-				// the root component is identified by having its
-				// key be the same as the visage._id
-				const visage = new Visage({ ownerId, name });
-				const rootComp = visage.content.get("tempId");
-				rootComp["_id"] = visage._id;
-				visage.content.set(visage._id.toString(), rootComp);
-				visage.content.delete("tempId");
+				const visage = new Visage(visageFields);
 				return await visage.save();
 			} catch (err) {
 				console.log(err);
