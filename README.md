@@ -8,4 +8,4 @@ Prominent back-end technologies include Express, GraphQL and Mongoose.
 
 Deployed at - https://gentle-sands-16072.herokuapp.com/
 
-Front-end source - https://github.com/GLukeM-H/frost
+Front-end source - https://github.com/GLukeM-H/frost-client
